@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restx import Api, Resource, fields
 from werkzeug.middleware.proxy_fix import ProxyFix
-from icecream import ic
+
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app)
@@ -48,7 +48,7 @@ DAO = TodoDAO()
 DAO.create({'task': 'Build an API'})
 DAO.create({'task': '?????'})
 DAO.create({'task': 'profit!'})
-ic(DAO)
+
 
 
 @ns.route('/')
