@@ -1,40 +1,46 @@
 import pytest
 from flask import json
-
-from app.app import app
-
-
-@pytest.fixture
-def client():
-    app.config["TESTING"] = True
-    with app.test_client() as client:
-        yield client
+import app
 
 
-def test_get_todos(client):
-    rv = client.get("/todos/")
+def test_get_fruits(client):
+    rv = client.get("/fruits/")
     assert rv.status_code == 200
     assert len(json.loads(rv.data)) == 3
 
 
-def test_post_todo(client):
-    rv = client.post("/todos/", json={"task": "new task"})
+def test_post_fruit(client):
+    rv = client.post("/fruits/", json={"name": "new fruit", "qty": 5, "price": 1.2})
     assert rv.status_code == 201
-    assert json.loads(rv.data)["task"] == "new task"
+    data = json.loads(rv.data)
+    assert data["name"] == "new fruit"
+    assert data["qty"] == 5
+    assert data["price"] == 1.2
 
 
-def test_get_todo(client):
-    rv = client.get("/todos/1")
+def test_get_fruit(client):
+    fruit_id = app.FruitDAO.fruits[0]["id"]
+    rv = client.get(f"/fruits/{fruit_id}")
     assert rv.status_code == 200
-    assert json.loads(rv.data)["task"] == "Build an API"
+    data = json.loads(rv.data)
+    assert data["name"] == "Apple"
+    assert data["qty"] == 10
+    assert data["price"] == 0.5
 
 
-def test_update_todo(client):
-    rv = client.put("/todos/1", json={"task": "updated task"})
+def test_update_fruit(client):
+    fruit_id = FruitDAO.fruits[0]["id"]
+    rv = client.put(
+        f"/fruits/{fruit_id}", json={"name": "updated fruit", "qty": 7, "price": 1.5}
+    )
     assert rv.status_code == 200
-    assert json.loads(rv.data)["task"] == "updated task"
+    data = json.loads(rv.data)
+    assert data["name"] == "updated fruit"
+    assert data["qty"] == 7
+    assert data["price"] == 1.5
 
 
-def test_delete_todo(client):
-    rv = client.delete("/todos/1")
+def test_delete_fruit(client):
+    fruit_id = FruitDAO.fruits[0]["id"]
+    rv = client.delete(f"/fruits/{fruit_id}")
     assert rv.status_code == 204
